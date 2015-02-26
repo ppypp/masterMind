@@ -234,7 +234,7 @@ public class View extends Canvas {
 			// Easy way to signify cheating
 			this.setBackground(Color.PINK);
 		} else {
-			this.setBackground(colors[0]);
+			this.setBackground(colors[2]);
 		}
 
 	}
@@ -271,8 +271,8 @@ public class View extends Canvas {
 		// loop through guess
 		for (int i = 0; i < (col); i++) {
 			board.setColor(colors[guess[i]]); // current guess colors
-			board.fillRect(i * size[4] + 3 * size[2] + 1, size[5]
-					* (row + 2 + 4) + 1, size[4] - 1, size[5] - 1);
+			board.fillRect(size[3] * 3 + i * size[5] + 1, size[4] * (row + 2)
+					+ 1, size[4] - 1, size[5] - 1);
 		}
 	}
 

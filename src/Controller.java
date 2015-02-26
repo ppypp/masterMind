@@ -25,7 +25,7 @@ public class Controller implements ActionListener, MouseListener{
 	// Num of Cols
 	private int col;
 	// Num of Colors
-	private int color;
+	private int numColors;
 	// Instance of View
 	private View view;
 	// Instance of Model
@@ -76,7 +76,7 @@ public class Controller implements ActionListener, MouseListener{
 	 */
 	public Controller(int ROWS, int COLORS, int COLUMNS){
 		row = ROWS;
-		color = COLORS;
+		numColors = COLORS;
 		col = COLUMNS;
 		model = new Model(ROWS, COLORS, COLUMNS);
 		view = new View(ROWS, COLORS, COLUMNS, this, model);
@@ -89,12 +89,6 @@ public class Controller implements ActionListener, MouseListener{
 	public void actionPerformed( ActionEvent e ) {
 		
 		if (e.getActionCommand().equals("Submit guess")) {
-			//TESTING BELOW
-			model.setGuess(0, 1);
-			model.setGuess(1, 2);
-			model.setGuess(2, 3);
-			model.setGuess(3, 4);
-			//TESTING ^
 			model.checkGuess();
 			//Now have response and guess calculated and stored
 		} else if (e.getActionCommand().equals("New game")){
@@ -120,10 +114,46 @@ public class Controller implements ActionListener, MouseListener{
 		/* get the x & y coordinates of the mouse position */
 		int x = e.getX();
 		int y = e.getY();
-		location(x,y);
+		// get current window size
+		size = view.getWindowSize();
+		// Decide what action to perform based on mouse click location
+		if(mouseInColorPaletteArea(x, y)) {
+			// Get color clicked
+			
+			// Subtract gap at left of color palette area
+			x = x - size[2];
+			// size[4] == size of large square
+			selectedColor = x / size[4] + 1;
+		}
+		
+		if(mouseInGuessArea(x, y)) {
+			// Subtract gap at left of guess area
+			x = x - size[2]*3;
+			int guessIndex = x / size[4];
+			
+			model.setGuess(guessIndex, selectedColor);
+		}
+		
 		view.repaint();
 	}
+	
+	private boolean mouseInColorPaletteArea(int x, int y) {
+		int colorPaletteStart = size[3] * (row * 2 + 1) + (size[5] * 0) + 1;
+		int colorPaletteEnd = size[3] * (row * 2 + 1) + (size[5] * 1) + 1;
+		
+		return y > colorPaletteStart && y < colorPaletteEnd;
+	}
+	
+	private boolean mouseInGuessArea(int x, int y) {
+		int guessAreaStart = (size[5]) * (0) + size[3] * (row * 2 + 4)+1;
+		int guessAreaEnd = (size[5]) * (1) + size[3] * (row * 2 + 4)-1;
+		
+		return y > guessAreaStart && y < guessAreaEnd;
+	}
+	
 	private void location(int x, int y) {
+		
+		
 		// TODO Auto-generated method stub
 		// IF in color palete : colorSelected is that color
 		// IF in guess zone : guess is the colorSelected
@@ -140,38 +170,58 @@ public class Controller implements ActionListener, MouseListener{
 		//Makes it so lines are still present, and the click zones can't overlap
 		
 		// Zone for Red
-		// X1: size[3] * (row * 2 + 1) +1 
-		// Y1: size[2] +1
-		// X2: size[3] * (row * 2 + 1) + size[5] -1
-		// Y2: size[4] + size[2] -1
+				// X1: size[2] + (size[4]*0) +1
+				// Y1: size[3] * (row * 2 + 1) + (size[5] * 0) +1 
+				// X2: size[2] + (size[4]*1) -1
+				// Y2: size[3] * (row * 2 + 1) + (size[5] * 1) -1
+		// Zone for Green
+				// X1: size[2] + (size[4]*0) +1
+				// Y1: size[3] * (row * 2 + 1) + (size[5] * 0) +1 
+				// X2: size[2] + (size[4]*1) -1
+				// Y2: size[3] * (row * 2 + 1) + (size[5] * 1) -1
+		// Zone for Blue
+				// X1: size[2] + (size[4]*1) +1
+				// Y1: size[3] * (row * 2 + 1) + (size[5] * 0) +1 
+				// X2: size[2] + (size[4]*2) -1
+				// Y2: size[3] * (row * 2 + 1) + (size[5] * 1) -1
+		// Zone for Cyan
+				// X1: size[2] + (size[4]*2) +1
+				// Y1: size[3] * (row * 2 + 1) + (size[5] * 0) +1 
+				// X2: size[2] + (size[4]*3) -1
+				// Y2: size[3] * (row * 2 + 1) + (size[5] * 1) -1
+		// Zone for Mygenta
+				// X1: size[2] + (size[4]*3) +1
+				// Y1: size[3] * (row * 2 + 1) + (size[5] * 0) +1 
+				// X2: size[2] + (size[4]*4) -1
+				// Y2: size[3] * (row * 2 + 1) + (size[5] * 1) -1
+		// Zone for Yellow
+				// X1: size[2] + (size[4]*4) +1
+				// Y1: size[3] * (row * 2 + 1) + (size[5] * 0) +1 
+				// X2: size[2] + (size[4]*5) -1
+				// Y2: size[3] * (row * 2 + 1) + (size[5] * 1) -1
 		
-//		//Color Palate Zones
-//				// ROW
-//				for (int i = 0; i < (2); i++) {
-//					num = size[3] * (row * 2 + 1) + size[5] * i;
-//					board.drawLine(size[2], num, size[2] * 13, num);
-//				}
-//				// COL
-//				for (int i = 0; i < (color + 1); i++) {
-//					num = i * size[4] + size[2];
-//					board.drawLine(num, size[3] * (row * 2 + 1), num, size[3]
-//							* (row * 2 + 3));
-//
-//				}
-//		// Guess Area Construction
-//				// draw the Rows
-//				for (int i = 0; i < 2; i++) { // Bottom line => +1
-//					// drawLine [ ( x, y ) (x,y) ] => draws line between points
-//					num = (size[5]) * (i) + size[3] * (row * 2 + 4);
-//					board.drawLine(3 * size[2], num, 11 * size[2], num);
-//				}
-//				// draw the Columns
-//				for (int i = 0; i < (col + 1); i++) {
-//					num = size[4] * (i) + size[4] + size[2];
-//					board.drawLine(num, size[3] * (row * 2 + 4), num, size[3]
-//							* (row * 2 + 6));
-//					// +1 for how it works (below/to right if coordinate point)
-//				}
+		// Zone for G1
+				// X1: size[2] + (size[4]*1) +1
+				// Y1: (size[5]) * (0) + size[3] * (row * 2 + 4)+1
+				// X1: size[2] + (size[4]*2) -1
+				// Y2: (size[5]) * (1) + size[3] * (row * 2 + 4)-1
+		// Zone for G2
+				// X1: size[2] + (size[4]*2) +1
+				// Y1: (size[5]) * (0) + size[3] * (row * 2 + 4)+1
+				// X1: size[2] + (size[4]*3) -1
+				// Y2: (size[5]) * (1) + size[3] * (row * 2 + 4)-1
+		// Zone for G3
+				// X1: size[2] + (size[4]*3) +1
+				// Y1: (size[5]) * (0) + size[3] * (row * 2 + 4)+1
+				// X1: size[2] + (size[4]*4) -1
+				// Y2: (size[5]) * (1) + size[3] * (row * 2 + 4)-1
+		// Zone for G4
+				// X1: size[2] + (size[4]*4) +1
+				// Y1: (size[5]) * (0) + size[3] * (row * 2 + 4)+1
+				// X1: size[2] + (size[4]*5) -1
+				// Y2: (size[5]) * (1) + size[3] * (row * 2 + 4)-1
+
+		
 	}
 
 	/*
