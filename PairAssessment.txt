@@ -1,0 +1,9 @@
+# masterMind
+Partners:
+Michael Gerten
+Angel ZZ
+Cody Sehl
+
+Time:
+Worked on the code for approximately 8-10 hours. About 6 of those hours we spent together all three of us. 
+The other 4 were split up into teams of 2 working on different sections of the code.
