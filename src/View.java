@@ -8,9 +8,11 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.util.Collections;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /*
@@ -21,7 +23,7 @@ public class View extends Canvas {
 	// The color arrays
 	// 0 : W , 1 : R , 2 : G , 3 : B , 4 : C , 5 : M , 6 : Y
 	// WHITE is for null/empty
-	private Color colors[] = { Color.WHITE, Color.red, Color.green, Color.blue,
+	private Color colors[] = { Color.white, Color.red, Color.green, Color.blue,
 			Color.cyan, Color.magenta, Color.yellow,
 			Color.pink, Color.orange, Color.darkGray,   };//Extra Colors for fun
 	// The response array - light gray is default, as it signifies a completely
@@ -30,7 +32,7 @@ public class View extends Canvas {
 	private Color responseColors[] = { Color.lightGray, Color.black,
 			Color.white, };
 	// Num of rows
-	private int row;
+	private int rows;
 	// Num of Colors
 	private int color;
 	// Num of Cols
@@ -41,11 +43,8 @@ public class View extends Canvas {
 	private JFrame window;
 	// reusable variable
 	private int num;
-	// window.setSize(new Dimension((color * 2 + 2) * 20 + 0, REASONING BEHIND
-	// CHOICES
-	// (row * 2 + 12) * 20 + 0)); // TEE HE //14, 36 // + Arbitrary
 	private int widthDiv = 14;
-	private int heightDiv = 36; // was 32 , added for buttons
+	private int heightDiv = 36;
 	// Panel for top buttons
 	private JPanel buttonPanel;
 	//Buttons
@@ -58,6 +57,9 @@ public class View extends Canvas {
 	private Controller controller;
 	// Boolean for weather to reveal currentCode
 	private boolean reveal;
+	
+	// Size units
+	public static int GRID_UNIT;
 
 	/*
 	 * Constructor of the View
@@ -65,7 +67,7 @@ public class View extends Canvas {
 	public View(int ROWS, int COLORS, int COLUMNS, Controller c, Model m) {
 		// Set local values
 		col = COLUMNS;
-		row = ROWS;
+		rows = ROWS;
 		color = COLORS;
 		model = m;
 		controller = c;
@@ -81,8 +83,8 @@ public class View extends Canvas {
 		window = new JFrame("Mastermind");
 		// Exit if we close the window
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		window.setBackground(colors[0]);
-		this.setBackground(colors[0]);
+		window.setBackground(Color.white);
+		this.setBackground(Color.white);
 		size = getWindowSize();
 		/* just one button to submit each guess */
 		submit = new JButton("Submit guess");
@@ -96,7 +98,7 @@ public class View extends Canvas {
 		addMouseListener(controller);
 		// Top buttons and placement
 		buttonPanel = new JPanel();
-		buttonPanel.setBackground(colors[0]);
+		buttonPanel.setBackground(Color.white);
 		buttonPanel.add(r, BorderLayout.WEST);
 		buttonPanel.add(newGame, BorderLayout.EAST);
 
@@ -107,7 +109,7 @@ public class View extends Canvas {
 		window.getContentPane().add(this);
 		window.getContentPane().add(buttonPanel, BorderLayout.NORTH);
 		window.getContentPane().add(submit, BorderLayout.SOUTH);
-
+		
 		repaint();
 	}
 
@@ -115,8 +117,6 @@ public class View extends Canvas {
 	 * Make the game grid and fill in all known information
 	 */
 	public void updateBoard(Graphics board) {
-		// Clear board
-		clear(board);
 		// Set Line Color
 		board.setColor(Color.BLACK);
 		// Get current size
@@ -124,7 +124,7 @@ public class View extends Canvas {
 		// Use num in order to simplify code, looks cleaner
 		// Guess Panel Construction
 		// Draw the rows
-		for (int i = 0; i < (row + 1); i++) { // Bottom line => +1
+		for (int i = 0; i < (rows + 1); i++) { // Bottom line => +1
 			// drawLine [ ( x, y ) (x,y) ] => draws line between points
 			num = (size[5] * i) + 0;
 			board.drawLine(2 * size[2], num, 12 * size[2], num);
@@ -132,40 +132,40 @@ public class View extends Canvas {
 		// Draw the columns
 		for (int i = 0; i < (col + col / 2); i++) { // effectively 6
 			num = size[4] * (i) + size[4];
-			board.drawLine(num, 0, num, (row) * size[5] + 0);
+			board.drawLine(num, 0, num, (rows) * size[5] + 0);
 			// +1 for how it works (below/to right if coordinate point)
 		}
 		// Response Area
 		// Draw the Rows
-		for (int i = 0; i < (row); i++) { // No +1 because mid-lines
+		for (int i = 0; i < (rows); i++) { // No +1 because mid-lines
 			num = (size[5] * i) + size[3];
 			board.drawLine(10 * size[2], num, 12 * size[2], num);
 		}
 		// Draw the column
 		num = size[4] + 9 * size[2];
-		board.drawLine(num, 0, num, (row) * size[5] + 0);
+		board.drawLine(num, 0, num, (rows) * size[5] + 0);
 		// Color Palate Zones
 		// Draw the Rows
 		for (int i = 0; i < (2); i++) {
-			num = size[3] * (row * 2 + 1) + size[5] * i;
+			num = size[3] * (rows * 2 + 1) + size[5] * i;
 			board.drawLine(size[2], num, size[2] * 13, num);
 		}
 		// Draw the Columns
 		for (int i = 0; i < (color + 1); i++) {
 			num = i * size[4] + size[2];
-			board.drawLine(num, size[3] * (row * 2 + 1), num, size[3] * (row * 2 + 3));
+			board.drawLine(num, size[3] * (rows * 2 + 1), num, size[3] * (rows * 2 + 3));
 		}
 		// Guess Area Construction
 		// draw the Rows
 		for (int i = 0; i < 2; i++) { // Bottom line => +1
 			// drawLine [ ( x, y ) (x,y) ] => draws line between points
-			num = (size[5]) * (i) + size[3] * (row * 2 + 4);
+			num = (size[5]) * (i) + size[3] * (rows * 2 + 4);
 			board.drawLine(3 * size[2], num, 11 * size[2], num);
 		}
 		// draw the Columns
 		for (int i = 0; i < (col + 1); i++) {
 			num = size[4] * (i) + size[4] + size[2];
-			board.drawLine(num, size[3] * (row * 2 + 4), num, size[3]* (row * 2 + 6));
+			board.drawLine(num, size[3] * (rows * 2 + 4), num, size[3]* (rows * 2 + 6));
 					
 			// +1 for how it works (below/to right if coordinate point)
 		}
@@ -173,14 +173,17 @@ public class View extends Canvas {
 		for (int i = 0; i < (col + col / 2); i++) {
 			// +1 becuase 0 is white
 			board.setColor(colors[i + 1]);
-			board.fillRect(i * size[4] + size[2] + 1, size[3] * (row * 2 + 1)+ 1, size[4] - 1, size[5] - 1);
+			board.fillRect(i * size[4] + size[2] + 1, size[3] * (rows * 2 + 1)+ 1, size[4] - 1, size[5] - 1);
 		}
 		// NOW add in all past guesses and responses
-		for (int i = 0; i < (row); i++) {
+		for (int i = 0; i < (rows); i++) {
 			updateBoard(board, i);
 		}
 		// Guess/Reveal Area
 		updateBoard(board, reveal);
+		if(model.loseGame()){
+			displayLose();
+		}
 	}
 
 	/*
@@ -203,6 +206,7 @@ public class View extends Canvas {
 		// Response fill in
 		for (int i = 0; i < (col / 2); i++) {
 			int[] response = model.getResponse(currRow);
+			response = sort(response);
 			// -1 to keep lines
 			// Top Boxes
 			board.setColor(responseColors[response[i]]);
@@ -215,8 +219,12 @@ public class View extends Canvas {
 					+ size[3] + 1, size[2] - 1, size[3] - 1);
 
 		}
+		if(model.winGame(guess)){
+			displayWin();
+		}
 	}
 
+	
 	/*
 	 * For updating the bottom gird area
 	 */
@@ -232,9 +240,9 @@ public class View extends Canvas {
 		}
 		if (model.getCheated() == true) {
 			// Easy way to signify cheating
-			this.setBackground(Color.PINK);
+			this.setBackground(Color.pink);
 		} else {
-			this.setBackground(colors[2]);
+			this.setBackground(Color.white);
 		}
 
 	}
@@ -271,7 +279,7 @@ public class View extends Canvas {
 		// loop through guess
 		for (int i = 0; i < (col); i++) {
 			board.setColor(colors[guess[i]]); // current guess colors
-			board.fillRect(size[3] * 3 + i * size[5] + 1, size[4] * (row + 2)
+			board.fillRect(size[3] * 3 + i * size[5] + 1, size[4] * (rows + 2)
 					+ 1, size[4] - 1, size[5] - 1);
 		}
 	}
@@ -284,7 +292,7 @@ public class View extends Canvas {
 		// draw the current Code
 		for (int i = 0; i < (col); i++) {
 			board.setColor(colors[currentCode[i]]);
-			board.fillRect(size[3] * 3 + i * size[5] + 1, size[4] * (row + 2)
+			board.fillRect(size[3] * 3 + i * size[5] + 1, size[4] * (rows + 2)
 					+ 1, size[4] - 1, size[5] - 1);
 
 		}
@@ -316,21 +324,30 @@ public class View extends Canvas {
 	}
 
 	/*
-	 * IF needed to use chars as per requirements
+	 * Sort an int[] so that 1s are first, 2s are second, and 0s are last
 	 */
-	public boolean CharToColor(char c) { // Returns boolean for error testing
-		colors[0] = null; // ?
-
-		return false;
+	private int[] sort(int[] response) {
+		int[] temp = new int[response.length];
+		//keep track of which index were at
+		int counter = 0;
+		//find all the blacks
+		for(int i =0; i < response.length; i++){
+			if(response[i] == 1){
+				temp[counter] = response[i];
+				counter++;
+			}
+		}
+		//find all the whites
+		for(int i =0; i<response.length; i++){
+				if(response[i] == 2){
+					temp[counter] = response[i];
+					counter++;
+				}
+		}
+		//java initializes the empty values as zero
+		return temp;
 	}
 
-	/*
-	 * Pointless or used for making clear- TODO to be determined
-	 */
-	private void clear(Graphics board) {
-		// If everything is set back to 0, it will be white everywhere-> making
-		// this unnecessary
-	}
 
 	/*
 	 * the paint method we need remember we're a ContentPane here Don't call
@@ -339,4 +356,23 @@ public class View extends Canvas {
 	public void paint(Graphics g) {
 		updateBoard(g);
 	}
+	/*
+	 * Method to display a win message
+	 */
+	public void displayWin(){
+		JOptionPane.showMessageDialog(window, "YOU WIN!");
+		submit.setEnabled(false);
+	}
+	/*
+	 * Method to display lose message
+	 */
+	public void displayLose(){
+		JOptionPane.showMessageDialog(window, "YOU LOSE!");
+		setEnableNewGameButton(false);
+	}
+	
+	public void setEnableNewGameButton(boolean enabled) {
+		submit.setEnabled(enabled);
+	}
+	
 }

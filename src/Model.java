@@ -3,6 +3,7 @@
  * Michael Gerten, Angel Zuaznabal, Cody Sehl 
  */
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
 
@@ -25,7 +26,7 @@ public class Model {
 	// Number of rows
 	private int row;
 	// Number of color choices
-	private int color;
+	private int numColors;
 	// current code in this instance
 	private int[] currentCode;
 	// Array of guesses
@@ -47,7 +48,7 @@ public class Model {
 		// Set variables
 		col = COLUMNS;
 		row = ROWS;
-		color = COLORS;
+		numColors = COLORS;
 		//Initialize array size
 		currentCode = new int[col];
 		guesses = new int[row][col];
@@ -81,11 +82,11 @@ public class Model {
 		HashSet<Integer> s = new HashSet<Integer>();
 		// Fill the code[]
 		for (int i = 0; i < col; i++) {
-			int num = codeMaker.nextInt(color);
+			int num = codeMaker.nextInt(numColors);
 			// Get Numbers inside
 			while (s.contains(num)){ // for no repeats
 				//Grab a number
-				num = codeMaker.nextInt(color);
+				num = codeMaker.nextInt(numColors);
 			}
 			// Add unique num to set
 			s.add(num);
@@ -157,17 +158,23 @@ public class Model {
 /*
  * Check if the game is finished, victory 
  */
-	public boolean winGame(){
+	public boolean winGame(int[] guess){
+		if (Arrays.equals(guess,currentCode)){
+			return true;
+		}else{
+			return false;
+		}
+		
+	}
+	/*
+	 * Check if 12 guesses have occured
+	 */
+	public boolean loseGame(){
 		if (counter > 11){
 			//GameOver TODO other stuff
-			return false;
-		}else{
-			if (currentGuess == currentCode){
-				return true;
-			}else{
-				return false;
-			}
+			return true;
 		}
+		return false;
 	}
 
 	/*

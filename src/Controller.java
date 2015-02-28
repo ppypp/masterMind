@@ -89,13 +89,20 @@ public class Controller implements ActionListener, MouseListener{
 	public void actionPerformed( ActionEvent e ) {
 		
 		if (e.getActionCommand().equals("Submit guess")) {
-			model.checkGuess();
-			//Now have response and guess calculated and stored
+			int[] guess = model.getCurrentGuess();
+			if (guess[0] == 0 || guess[1] == 0 || guess[2] == 0 || guess[3] == 0)	{
+				//Do nothing
+			}else{
+				model.checkGuess();
+				//Now have response and guess calculated and stored
+			}
 		} else if (e.getActionCommand().equals("New game")){
 			//Start new game
 			model.startGame();
 			//reset reveal answer boolean
 			view.setRevealAnswer(false);
+			// Enable submit guess button
+			view.setEnableNewGameButton(true);
 		} else if (e.getActionCommand().equals("Reveal")){
 			//toggle reveal answer boolean
 			view.setRevealAnswer();
@@ -130,8 +137,9 @@ public class Controller implements ActionListener, MouseListener{
 			// Subtract gap at left of guess area
 			x = x - size[2]*3;
 			int guessIndex = x / size[4];
-			
-			model.setGuess(guessIndex, selectedColor);
+			if (guessIndex < 4){
+				model.setGuess(guessIndex, selectedColor);
+			}
 		}
 		
 		view.repaint();
