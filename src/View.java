@@ -8,7 +8,6 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.util.Collections;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -57,7 +56,7 @@ public class View extends Canvas {
 	private Controller controller;
 	// Boolean for weather to reveal currentCode
 	private boolean reveal;
-	
+
 	// Size units
 	public static int GRID_UNIT;
 
@@ -109,7 +108,7 @@ public class View extends Canvas {
 		window.getContentPane().add(this);
 		window.getContentPane().add(buttonPanel, BorderLayout.NORTH);
 		window.getContentPane().add(submit, BorderLayout.SOUTH);
-		
+
 		repaint();
 	}
 
@@ -166,7 +165,7 @@ public class View extends Canvas {
 		for (int i = 0; i < (col + 1); i++) {
 			num = size[4] * (i) + size[4] + size[2];
 			board.drawLine(num, size[3] * (rows * 2 + 4), num, size[3]* (rows * 2 + 6));
-					
+
 			// +1 for how it works (below/to right if coordinate point)
 		}
 		// draw the color palate
@@ -217,14 +216,12 @@ public class View extends Canvas {
 			board.setColor(responseColors[response[i + (col / 2)]]);
 			board.fillRect(i * size[2] + 5 * size[4] + 1, size[5] * (currRow)
 					+ size[3] + 1, size[2] - 1, size[3] - 1);
-
 		}
 		if(model.winGame(guess)){
 			displayWin();
 		}
 	}
 
-	
 	/*
 	 * For updating the bottom gird area
 	 */
@@ -244,7 +241,6 @@ public class View extends Canvas {
 		} else {
 			this.setBackground(Color.white);
 		}
-
 	}
 
 	/*
@@ -259,7 +255,6 @@ public class View extends Canvas {
 			reveal = false;
 			submit.setEnabled(true);
 		}
-
 	}
 
 	/*
@@ -273,7 +268,6 @@ public class View extends Canvas {
 	 * For showing selected colors
 	 */
 	private void showGuessesSoFar(Graphics board) {
-		// TODO only problem is that after reveal, boxes stay pink even though
 		// should be white
 		int[] guess = model.getCurrentGuess();
 		// loop through guess
@@ -294,7 +288,6 @@ public class View extends Canvas {
 			board.setColor(colors[currentCode[i]]);
 			board.fillRect(size[3] * 3 + i * size[5] + 1, size[4] * (rows + 2)
 					+ 1, size[4] - 1, size[5] - 1);
-
 		}
 	}
 
@@ -339,10 +332,10 @@ public class View extends Canvas {
 		}
 		//find all the whites
 		for(int i =0; i<response.length; i++){
-				if(response[i] == 2){
-					temp[counter] = response[i];
-					counter++;
-				}
+			if(response[i] == 2){
+				temp[counter] = response[i];
+				counter++;
+			}
 		}
 		//java initializes the empty values as zero
 		return temp;
@@ -350,29 +343,33 @@ public class View extends Canvas {
 
 
 	/*
-	 * the paint method we need remember we're a ContentPane here Don't call
-	 * paint, call repaint instead : ie. MAGIC
+	 * Updates the board
 	 */
 	public void paint(Graphics g) {
 		updateBoard(g);
 	}
+	
 	/*
-	 * Method to display a win message
+	 * Display a win message
 	 */
 	public void displayWin(){
 		JOptionPane.showMessageDialog(window, "YOU WIN!");
 		submit.setEnabled(false);
 	}
+	
 	/*
-	 * Method to display lose message
+	 * Display lose message
 	 */
 	public void displayLose(){
 		JOptionPane.showMessageDialog(window, "YOU LOSE!");
 		setEnableNewGameButton(false);
 	}
-	
+
+	/*
+	 * Enable or disable the 'new game' button
+	 */
 	public void setEnableNewGameButton(boolean enabled) {
 		submit.setEnabled(enabled);
 	}
-	
+
 }

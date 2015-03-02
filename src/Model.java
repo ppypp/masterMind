@@ -11,13 +11,6 @@ import java.util.Random;
  * The model Class calculates the code, the accuracy of guesses, and stores past guesses/responses.
  */
 public class Model {
-//ALL ARRAYS IN MODEL ARE NUMBERS, THAT WAY IT IS CONSTIENT
-	//Also, easy comparisons!
-	// Things we need
-	// Row of 4 pegs (a guess)
-	// Pool of 6 pegs (to grab from - ie. can't grab twice)
-	// Array of Guesses - keep track of past
-
 	private Random codeMaker = new Random();
 	// Counter for which # guess it is
 	private int counter;
@@ -64,11 +57,11 @@ public class Model {
 		//Initialize board state -> resets when starting a new game
 		counter = 0;
 		cheated = false;
-		intialize(guesses);
-		intialize(responses);
-		intialize(currentGuess);
-		intialize(currentResponse);
-		intialize(currentCode);
+		guesses = new int[row][col];
+		responses = new int[row][col];
+		currentGuess = new int[col];
+		currentResponse = new int[col];
+		currentCode = new int[col];
 		// Make hidden code for this game
 		currentCode = makeCode();
 	}
@@ -119,11 +112,11 @@ public class Model {
 		}
 		//Because it was using a reference rather than new object (array)
 		int[] current = new int[col]; 
-		// To preserve integrity of currentCode //Why it is still killing itself- > NO IDeA TODO MAKe Sure WorkS
+		// To preserve integrity of currentCode
 		for (int i = 0; i < currentCode.length; i++) {
 			current[i] = currentCode[i];
 		}
-		
+
 		// for each result spot / guess
 		for (int i = 0; i < col; i++) {
 			// in correct spot
@@ -149,115 +142,68 @@ public class Model {
 		//store most recent response-> Needed?
 		currentResponse = result; 
 		responses[counter] = result;
-		 //clear currentGuess as it is a past guess now
-		//intialize(currentGuess);
-		// randomize output? maybe in a different step?
 		//Guess done, increment counter
 		counter++;
 	}
-/*
- * Check if the game is finished, victory 
- */
+
+	/*
+	 * Check if the game is finished, victory 
+	 */
 	public boolean winGame(int[] guess){
 		if (Arrays.equals(guess,currentCode)){
 			return true;
 		}else{
 			return false;
 		}
-		
 	}
+
 	/*
 	 * Check if 12 guesses have occured
 	 */
 	public boolean loseGame(){
 		if (counter > 11){
-			//GameOver TODO other stuff
+			//GameOver
 			return true;
 		}
 		return false;
 	}
 
-	/*
-	 * Initializing 2-D arrays, set value to 0 to display white when not changed
-	 */
-	private void intialize(int[][] array) {
-		for (int i = 0; i < row; i++) { // ROW
-			for (int j = 0; j < col; j++) { // COL
-				array[i][j] = 0;
-			}
-		}
-	}
-	/*
-	 * Overload, for 1-D arrays 
-	 */
-	private void intialize(int[] array) {
-		for (int i = 0; i < col; i++) { // COL
-			array[i] = 0;
-		}
-	}
-	
-	/*
-	 * Conversion from Char to Int if need to use Chars to represent colors (requirement question)
-	 */
-	private int[] charToInt(char[] guess) {
-		int[] output = new int[guess.length];
-		intialize(output);
-		// Do Stuff if needed
-		return output;
-	}
-	/*
-	 * Setter Method for Guess - Used by Controller
-	 */
 	public void setGuess(int place, int color){//color: Could be either an int or char-> simple change
 		currentGuess[place] = color;
 	}
-	/*
-	 * Getter Method for Guess - Used by View
-	 */
+
 	public int[] getGuess(int row){
 		return guesses[row];
 	}
-	/*
-	 * Getter Method for Response - Used by View
-	 */
+
 	public int[] getResponse(int row){
 		return responses[row];
 	}
+
 	/*
 	 * Getter Method for Response - Used by View
 	 */
 	public int[] getCurrentCode(){
 		//To be consistent in state of guess
-		intialize(currentGuess);
+		currentGuess = new int[col];
 		return currentCode;
 	}
-	/*
-	 * Getter Method for counter - Used by Controller?
-	 */
+
 	public int getCounter(){
 		return counter;
 	}
-	/*
-	 * Getter Method for CurrentGuess (so far) - Used by View
-	 */
+
 	public int[] getCurrentGuess(){
 		return currentGuess;
 	}
-	/*
-	 * Getter Method for LastGuess  - Used by View //USEFUL?? Maybe 
-	 */
 	public int[] getGuess(){
-		return guesses[counter--]; //TODO ensure works
+		return guesses[counter--];
 	}
-	/*
-	 * Setter Method for Cheated - Used by View
-	 */
+
 	public void setCheated(boolean b) {
 		cheated = b;
 	}
-	/*
-	 * Getter Method for Cheated - Used by View
-	 */
+
 	public boolean getCheated() {
 		return cheated;
 	}
