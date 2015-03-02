@@ -206,7 +206,7 @@ public class View extends Canvas {
 		// Response fill in
 		for (int i = 0; i < (col / 2); i++) {
 			int[] response = model.getResponse(currRow);
-			response = sort(response);
+			response = sortColors(response);
 			// -1 to keep lines
 			// Top Boxes
 			board.setColor(responseColors[response[i]]);
@@ -326,7 +326,7 @@ public class View extends Canvas {
 	/*
 	 * Sort an int[] so that 1s are first, 2s are second, and 0s are last
 	 */
-	private int[] sort(int[] response) {
+	private int[] sortColors(int[] response) {
 		int[] temp = new int[response.length];
 		//keep track of which index were at
 		int counter = 0;
